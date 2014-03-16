@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<div id="bm1">
+<div id="menu">
+<div id="im">
+<a href="index.html" id="a1">Home</a>
+<a href="Autocomplete.html" id="a1">Find Route</a>
+<a href="LatLong.html" id="a1"> LatLong </a>		
+<a href="MultipleMarkers.html" id="a1">MultipleMarkers </a>
+<a href="SendWs.html" id="a1">SendLatLang</a>
+<a href="phonegapGEO.html" id="a1">SendLatLang</a>
+</div>
+</div>
+</div>
+<script
+src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false">
+</script>
+
+<script>
+function initialize()
+{
+var mapProp = {
+  center:new google.maps.LatLng(51.508742,-0.120850),
+  zoom:5,
+  mapTypeId:google.maps.MapTypeId.ROADMAP
+  };
+var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+<style type="text/css">
+html {height:100%}
+body {height:90%;margin:0;padding:0}
+#googleMap {
+height:100%;
+width:100%;
+}
+#bm1{
+padding-top:1%;
+padding-left:2%;
+padding-bottom:1%;
+padding-right:2%;
+}
+#menu{
+border:2px solid #a1a1a1; 
+background:#dddddd;
+width:100%;
+border-radius:25px; 
+}
+#im{
+text-align:center;
+}
+#a1{
+font-size:13px;
+padding-right:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="googleMap"></div>
+
+</body>
+</html>

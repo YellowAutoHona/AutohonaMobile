@@ -1,0 +1,171 @@
+<html>
+<head>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+
+<div id="bm1">
+<div id="menu">
+<div id="im">
+<a href="index.html" id="a1">Home</a>
+<a href="Autocomplete.html" id="a1">Find Route</a>
+<a href="LatLong.html" id="a1"> LatLong </a>		
+<a href="MultipleMarkers.html" id="a1">MultipleMarkers </a>
+<a href="SendWs.html" id="a1">SendLatLang</a>
+</div>
+</div>
+</div>
+
+
+
+<style id="text/css">
+#bm1{
+padding-top:1%;
+padding-left:2%;
+padding-bottom:1%;
+padding-right:2%;
+}
+#menu{
+border:2px solid #a1a1a1; 
+background:#dddddd;
+width:100%;
+border-radius:25px; 
+}
+#im{
+text-align:center;
+}
+#a1{
+font-size:13px;
+padding-right:10px;
+}
+#map-canvas{
+height:100%;
+}
+
+
+      html, body{
+        height: 100%;
+       }
+      .controls {
+        margin-top: 2%;
+        height: 5%;
+       }
+	  #pac-input1 {
+        background-color: #fff;
+        padding: 0 11px 0 13px;
+        width:50%;
+      }
+     
+
+      
+}
+
+
+</style>
+<script>
+var town1, town2, sourcestore='', destinationstore='';
+var directionsDisplay;
+var directionsService;
+function initialize() 
+{
+directionsService = new google.maps.DirectionsService();
+
+  var mapOptions = {
+    center: new google.maps.LatLng(17.385044, 78.486671),
+    zoom: 13
+  };
+  directionsDisplay = new google.maps.DirectionsRenderer();
+  var map = new google.maps.Map(document.getElementById('map-canvas'),
+    mapOptions);
+directionsDisplay.setMap(map);
+  var input = (document.getElementById('pac-input1'));
+
+  var types = document.getElementById('type-selector');
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(types);
+
+  var autocomplete = new google.maps.places.Autocomplete(input);
+  autocomplete.bindTo('bounds', map);
+  
+  
+  
+  google.maps.event.addListener(autocomplete, 'place_changed', function() {
+   var place = autocomplete.getPlace();
+  
+
+    var address = '';
+    if (place.address_components) {
+      address = [
+        (place.address_components[0] && place.address_components[0].short_name || ''),
+        (place.address_components[1] && place.address_components[1].short_name || ''),
+        (place.address_components[2] && place.address_components[2].short_name || '')
+      ].join(',');
+    }
+	sourcestore = address;
+  });
+  
+  
+  
+
+ 
+ var input1 = (document.getElementById('pac-input2'));
+
+  var types1 = document.getElementById('type-selector');
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input1);
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(types1);
+
+  var autocomplete1 = new google.maps.places.Autocomplete(input1);
+  autocomplete.bindTo('bounds', map);
+  google.maps.event.addListener(autocomplete1, 'place_changed', function() {
+   var place1 = autocomplete1.getPlace();
+   
+    var address1 = '';
+    if (place1.address_components) {
+      address1 = [
+        (place1.address_components[0] && place1.address_components[0].short_name || ''),
+        (place1.address_components[1] && place1.address_components[1].short_name || ''),
+        (place1.address_components[2] && place1.address_components[2].short_name || '')
+      ].join(',');
+    }
+	destinationstore = address1;
+  });
+}
+
+function setRoute()
+{
+if(sourcestore != ''&&destinationstore !='')
+{
+calcRoute();
+}
+else
+{
+alert("please enter the google adress bars.... source and destination");
+}
+}
+
+function calcRoute() {
+  var start = sourcestore;
+  var end   = destinationstore;
+
+console.log(sourcestore);
+  var request = {
+      origin:start,
+      destination:end,
+      travelMode: google.maps.TravelMode.DRIVING
+  };
+  directionsService.route(request, function(response, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(response);
+    }
+  });
+}
+
+
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+</head>
+<body>
+<div><input id="pac-input1" class="controls" type="text" placeholder="Enter source"></div><br>
+<div><input id="pac-input2" class="controls" type="text" placeholder="Enter destination"></div>
+<button onclick="setRoute()">Show Route</button>
+<div id="map-canvas"></div>
+</body>
+</html>
