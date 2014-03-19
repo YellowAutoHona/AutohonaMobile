@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="css/jquery.mobile.flatui.css" />
+  <script src="js/jquery.js"></script>
+  <script src="js/jquery.mobile-1.4.0-rc.1.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+
+    <script>
+        var town1, town2, sourcestore='', destinationstore='';
+        var directionsDisplay;
+        var directionsService;
+        $(document).ready(function (){
+            $("#seconddiv").hide();
+            $("#thirddiv").hide();
+                });
+        function initialize()
+        {
+
+
+
+            directionsService = new google.maps.DirectionsService();
+
+            var mapOptions = {
+                center: new google.maps.LatLng(17.385044, 78.486671),
+                zoom: 13
+            };
+            directionsDisplay = new google.maps.DirectionsRenderer();
+            var map = new google.maps.Map(document.getElementById('googleMap'),
+                    mapOptions);
+            directionsDisplay.setMap(map);
+
+            var autocomplete = new google.maps.places.Autocomplete($("#pac-input1")[0], {});
+
+            google.maps.event.addListener(autocomplete, 'place_changed', function() {
+                var place = autocomplete.getPlace();
+                var address = '';
+                if (place.address_components) {
+                    address = [
+                        (place.address_components[0] && place.address_components[0].short_name || ''),
+                        (place.address_components[1] && place.address_components[1].short_name || ''),
+                        (place.address_components[2] && place.address_components[2].short_name || '')
+                    ].join(',');
+                }
+                sourcestore = address;
+            });
+
+
+
+            var autocomplete1 = new google.maps.places.Autocomplete($("#pac-input2")[0], {});
+
+            google.maps.event.addListener(autocomplete1, 'place_changed', function() {
+                var place1 = autocomplete1.getPlace();
+                var address1 = '';
+                if (place1.address_components) {
+                    address1 = [
+                        (place1.address_components[0] && place1.address_components[0].short_name || ''),
+                        (place1.address_components[1] && place1.address_components[1].short_name || ''),
+                        (place1.address_components[2] && place1.address_components[2].short_name || '')
+                    ].join(',');
+                }
+                destinationstore = address1;
+            });
+
+        }
+        function nattu()
+        {
+            if(sourcestore != ''&&destinationstore !='')
+            {
+                calcRoute();
+            }
+            else
+            {
+                alert("please enter the google adress bars.... source and destination");
+            }
+        }
+
+        function calcRoute() {
+            var start = sourcestore;
+            var end   = destinationstore;
+            var request = {
+                origin:start,
+                destination:end,
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+            directionsService.route(request, function(response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
+                }
+            });
+        }
+
+        function openitem()
+        {
+            $("#firstdiv").show();
+            $("#seconddiv").hide();
+            $("#thirddiv").hide();
+        }
+
+        function removeitem()
+        {
+
+            $("#firstdiv").hide();
+            $("#seconddiv").show();
+            $("#thirddiv").hide();
+            setmap();
+        }
+        function openthirditem()
+        {
+            $("#firstdiv").hide();
+            $("#seconddiv").hide();
+            $("#thirddiv").show();
+            setcountry();
+
+        }
+        function setmap(){
+            var mapOptions = {
+                zoom: 12,
+                center: new google.maps.LatLng(17.43144,78.432297),
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var mapz = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+            var marker;
+            $.each([[17.43144,78.432297],[17.3753,78.4744],[17.434797,78.428349]], function( index, value ) {
+
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(value[0],value[1]),
+                    title:"test success"
+                });
+                marker.setMap(mapz);
+
+            });
+
+        }
+        function setcountry()
+        {
+
+                var countries_list;
+
+
+                    $.getJSON('http://www.restcountries.eu/rest/v1/all?callback=jQuery110105713550252839923_1395170308221&_=1395170308222', function (result) {
+                        console.log(result);
+                        countries_list=result;
+
+                        $.each(countries_list, function(i, row) {
+                            //  console.log(JSON.stringify(row));
+                            $('#movie-list').append('<li><a href="" data-id="' +row.name+ '">'+row.name+'</a></li>');
+                            $('#movie-list').listview('refresh');
+                        });
+
+
+                    });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+</head>
+<body>
+  <div data-role="page">
+
+    <div data-role="panel" id="panel" data-position="left" data-theme="a" data-display="push">
+        <fieldset class="ui-grid-a">
+
+            <div class="ui-block-a"><button onclick="openitem()" data-icon="flat-settings" data-theme="a">Route Path</button></div>
+        </fieldset>
+        <fieldset class="ui-grid-a">
+            <div class="ui-block-a"><button onclick="removeitem()" data-icon="flat-man" data-theme="c">Multiple markers</button></div>
+        </fieldset>
+        <fieldset class="ui-grid-a">
+            <div class="ui-block-a"><button onclick="openthirditem()" data-icon="flat-lock" data-theme="e">List Of Data</button></div>
+        </fieldset>
+    </div>
+
+    <div data-role="header">
+
+
+      <a data-iconpos="notext" href="#panel" data-role="button" data-icon="flat-menu"></a>
+        <h1>Yellow Autohona</h1>
+        <a data-iconpos="notext" data-role="button" data-icon="home" title="Home">Home</a>
+    </div>
+      <div data-role="content" role="main">
+
+      <div id="firstdiv">
+
+          <input type="text" id="pac-input1" placeholder="Enter source area" />
+          <input type="text" id="pac-input2" placeholder="Enter Destination area" />
+          <button href="#panel" onclick="nattu()">Show route</button>
+
+          <div class="map" id="googleMap"></div>
+
+
+      </div>
+
+
+      <div id="seconddiv">
+
+          <div class="map" id="map-canvas"></div>
+
+      </div>
+
+          <div id="thirddiv">
+              <ul data-role="listview"  id="movie-list" data-theme="a">
+
+              </ul>
+
+                          <div data-role="content">
+Loading...
+                              <ul data-role="listview"  id="movie-data" data-theme="a">
+
+                              </ul>
+                          </div>
+                      </div>
+
+
+  </div>
+
+</div>
+
+</body>
+</html>
