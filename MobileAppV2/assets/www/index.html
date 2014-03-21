@@ -1,0 +1,503 @@
+<!-- Copyright (c) 2012 Mobile Developer Solutions -->
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="Content-type" name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width">
+    <title>MDS PhoneGap API Demo with jQuery Mobile</title>
+
+ 	<link rel="stylesheet" href="jquery.mobile/jquery.mobile-1.1.0.min.css" />
+	<link rel="stylesheet" href="index.css" /> 
+   <link href="demo/stylesheets/labs.css" media="screen" rel="stylesheet"	type="text/css" />
+    <script src="jquery.mobile/jquery-1.7.2.min"></script>
+	<script src="jquery.mobile/jquery.mobile-1.1.0.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="cordova-1.9.0.js"></script>
+	<script type="text/javascript" charset="utf-8" src="index.js"></script>
+	  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+	  
+	  
+	  <!-- rating -->
+	  <script src="lib/jquery.raty.js"></script>
+      <script src="demo/javascripts/labs.js" type="text/javascript"></script>
+	  
+	
+	<script>
+	 var town1, town2, sourcestore='', destinationstore='';
+     var directionsDisplay;
+     var directionsService;
+	$(document ).on( "pagecreate", "#map-page", function() {
+	    var defaultLatLng = new google.maps.LatLng(17.4276868,78.45356);  
+	    console.log(defaultLatLng);// Default to Hollywood, CA when no geolocation support
+
+	    if ( navigator.geolocation ) {
+	        function success(pos) {
+	            // Location found, show map with these coordinates
+	            drawMap(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+	        }
+	        function fail(error) {
+	            drawMap(defaultLatLng);  // Failed to find location, show default map
+	        }
+	        // Find the users current position.  Cache the location for 5 minutes, timeout after 6 seconds
+	        navigator.geolocation.getCurrentPosition(success, fail, {maximumAge: 500000, enableHighAccuracy:true, timeout: 6000});
+	    } else {
+	        drawMap(defaultLatLng);  // No geolocation support, show default map
+	    }
+	    var map;
+	    function drawMap(latlng) {
+	        var myOptions = {
+	            zoom: 10,
+	            center: latlng,
+	            mapTypeId: google.maps.MapTypeId.ROADMAP
+	        };
+	      map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+	        // Add an overlay to the map of current lat/lng
+	        var marker = new google.maps.Marker({
+	            position: latlng,
+	            map: map,
+	            title: "Greetings!"
+	        });
+	    }
+	   
+	    
+	    function getRoute()
+	     {
+	         if(sourcestore != ''&&destinationstore !='')
+	         {
+	             calcRoute();
+	         }
+	         else
+	         {
+	             alert("please enter the google adress bars.... source and destination");
+	         }
+	     }
+		 
+		 function calcRoute() {
+	         var start = sourcestore;
+	         var end   = destinationstore;
+	         var request = {
+	             origin:start,
+	             destination:end,
+	             travelMode: google.maps.TravelMode.DRIVING
+	         };
+	         directionsService.route(request, function(response, status) {
+	             if (status == google.maps.DirectionsStatus.OK) {
+	                 directionsDisplay.setDirections(response);
+	             }
+	         });
+	     }
+	    
+		 function initialize()
+	        {
+
+
+
+	            directionsService = new google.maps.DirectionsService();
+
+	            var mapOptions = {
+	                center: new google.maps.LatLng(17.4276868,78.45356),
+	                zoom: 13
+	            };
+	            directionsDisplay = new google.maps.DirectionsRenderer();
+	            map = new google.maps.Map(document.getElementById('googleMap'),
+	                    mapOptions);
+	            directionsDisplay.setMap(map);
+
+	            var autocomplete = new google.maps.places.Autocomplete($("#pac-input1")[0], {});
+
+	            google.maps.event.addListener(autocomplete, 'place_changed', function() {
+	                var place = autocomplete.getPlace();
+	                var address = '';
+	                if (place.address_components) {
+	                    address = [
+	                        (place.address_components[0] && place.address_components[0].short_name || ''),
+	                        (place.address_components[1] && place.address_components[1].short_name || ''),
+	                        (place.address_components[2] && place.address_components[2].short_name || '')
+	                    ].join(',');
+	                }
+	                sourcestore = address;
+	            });
+
+
+
+	            var autocomplete1 = new google.maps.places.Autocomplete($("#pac-input2")[0], {});
+
+	            google.maps.event.addListener(autocomplete1, 'place_changed', function() {
+	                var place1 = autocomplete1.getPlace();
+	                var address1 = '';
+	                if (place1.address_components) {
+	                    address1 = [
+	                        (place1.address_components[0] && place1.address_components[0].short_name || ''),
+	                        (place1.address_components[1] && place1.address_components[1].short_name || ''),
+	                        (place1.address_components[2] && place1.address_components[2].short_name || '')
+	                    ].join(',');
+	                }
+	                destinationstore = address1;
+	            });
+
+	        }
+	    
+			
+           function sourcesList(){
+        	   
+        	  // 17.434044,78.445608 ameerpet
+//        	   17.4276868,78.45356 panjagutta
+//       	   17.440254,78.442734 sr nagar
+//        	   17.361564,78.474665 charminar
+//        	   17.392181,78.440996 mehdipatnam
+//        	   17.236609,78.429531 samshabad
+//        	   17.45061,78.470514 begumpet
+//        	   17.429238,78.412278 jublee hills
+//        	   17.39924,78.470322 assembly
+//        	   17.383366.78.400677 golkonda fort
+
+
+getCurrentPos();
+           }
+        	  function getCurrentPos(){
+        		
+        		  
+        		  if ( navigator.geolocation ) {
+        		        function success(pos) {
+        		            // Location found, show map with these coordinates
+        		            //drawMap(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+        		             
+        		             var coordsObj=pos.coords;
+        		        	 console.log(coordsObj.latitude+"/"+coordsObj.longitude);
+        		        	   $.each([[17.434044,78.445608,"ammerpet"],[17.434349,78.502792,"secunderabad"],[17.440254,78.442734,"sr nagar"],
+        		        	           [17.361564,78.474665,"charminar"],[17.392181,78.440996,"mehdipatnam"],[17.236609,78.429531,"samshabad airport"],
+        		        	           [17.65061,78.470514,"Begunpet airport"],[17.429238,78.412278,"jubleehills"],[17.39924,78.470322,"assembly"],
+        		        	           [17.383366,78.400677,"golkanda fort"]], function( index, value ) {
+        		                //  alert("sss"+coordsObj.latitude+" , "+coordsObj.longitude+" , "+value[0]+" ,"+value[1]+"  THE END");
+        		                  	
+        		        	   getDist(coordsObj.latitude,coordsObj.longitude,value[0],value[1],value[2]);
+        		           });
+        		            
+        		            
+        		            
+        		            
+        		            
+        		        }
+        		        function fail(error) {
+        		            return defaultLatLng;  // Failed to find location, show default map
+        		        }
+        		        // Find the users current position.  Cache the location for 5 minutes, timeout after 6 seconds
+        		        navigator.geolocation.getCurrentPosition(success, fail, {maximumAge: 500000, enableHighAccuracy:true, timeout: 6000});
+        		    } else {
+        		        return defaultLatLng;  // No geolocation support, show default map
+        		    }
+        	  }
+			function getDist(lat1,lon1,lat2,lon2,place){
+
+			//	lat1=17.434044;
+			   // lon1=78.445608;
+			 //   lat2=17.426654;
+			 //   lon2=78.452586;
+
+			    unit="K";
+
+			    var radlat1 = Math.PI * lat1/180
+			    var radlat2 = Math.PI * lat2/180
+			    var radlon1 = Math.PI * lon1/180
+			    var radlon2 = Math.PI * lon2/180
+			    var theta = lon1-lon2
+			    var radtheta = Math.PI * theta/180
+			    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) *  Math.cos(radlat2) * Math.cos(radtheta);
+			    dist = Math.acos(dist)
+			    dist = dist * 180/Math.PI
+			    dist = dist * 60 * 1.1515
+			    if (unit=="K") { dist = dist * 1.609344 }
+			   // if (unit=="N") { dist = dist * 0.8684 }
+			   var str="";
+			   str=""
+			    $("#addLocation").append("<span>"+place+" is -> "+dist.toFixed(2)+"KM</span><br/>");
+
+			}
+			$("#nearest").on("pageshow",function (event) {
+		       
+		    //  getDist(17.434044,78.445608,17.426654,78.452586);
+		    $("#addLocation").html("");
+		      sourcesList();
+
+		});
+			
+			
+			//rating script
+			
+			
+			$(function() {
+				AntiBOT.init('.new_comment');
+				CommentResponder.init();
+				$('#comment_body').taby();
+			});
+			$.fn.raty.defaults.path = 'lib/images';
+			$(function() {
+				$('#score').raty(
+						{
+							mouseover : function(score, evt) {
+								alert('ID: ' + $(this).attr('id') + "\nscore: "
+										+ score + "\nevent: " + evt);
+							}
+						});
+				$('#scorecard').raty({readOnly: true, score: 3});
+				$('#iconRange').raty({
+					path : null,
+					starOff : 'lib/images/star-off.png',
+					iconRange : [ {
+						range : 1,
+						on : 'demo/images/1.png',
+						off : 'demo/images/0.png'
+					}, {
+						range : 2,
+						on : 'demo/images/2.png',
+						off : 'demo/images/0.png'
+					}, {
+						range : 3,
+						on : 'demo/images/3.png',
+						off : 'demo/images/0.png'
+					}, {
+						range : 4,
+						on : 'demo/images/4.png',
+						off : 'demo/images/0.png'
+					}, {
+						range : 5,
+						on : 'demo/images/5.png',
+						off : 'demo/images/0.png'
+					} ]
+				});
+
+				$('#width').raty({
+					width : 150
+				});
+			});
+			//rating script end
+			
+			
+			
+	});
+	
+	$(document).on( "pagecreate", "#multiple-page", function() {
+		multipleMarks();
+	 function multipleMarks(){
+        var mapOptions = {
+            zoom: 12,
+            center: new google.maps.LatLng(17.4276868,78.45356),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var mapz = new google.maps.Map(document.getElementById("multiple-markers"), mapOptions);
+        var marker;
+        $.each([[17.43144,78.432297],[17.3753,78.4744],[17.434797,78.428349]], function( index, value ) {
+
+            marker = new google.maps.Marker({
+                position: new google.maps.LatLng(value[0],value[1]),
+                title:"test success"
+            });
+            marker.setMap(mapz);
+
+        });
+
+    }
+	});
+	</script>
+	<style>
+	/*rating*/
+	.white {
+	background-color: #FFF
+}
+.hint {
+	text-align: center;
+	width: 160px
+}
+div.hint {
+	font-size: 1.4em;
+	height: 46px;
+	margin-top: 15px;
+	padding: 7px
+}
+/* rating */
+	
+	
+	#map-page, #map-canvas { width: 100%; height: 100%; padding: 0; }
+	#multiple, #multiple-markers { width: 100%; height: 100%; padding: 0; }
+	body {height:100%;margin:0;padding:0}
+
+	.container1{
+    				background-color:black;
+    				width: 100%;
+    				height:100%;
+ 				}
+
+#cintainer2{
+
+   
+    margin-left:2%;
+    margin-right:2%;
+    border:2% solid;
+    background:#E4A010;
+    border-radius:20px;
+       
+}
+	#image{
+margin-left:35%;
+}
+	
+	</style>
+</head>
+<body>
+<div data-role="page" id="map-page" data-url="map-page">
+    
+            <input type="text" id="pac-input1" placeholder="Enter source area" />
+          <input type="text" id="pac-input2" placeholder="Enter Destination area" />
+          <button href="#panel" onclick="getRoute()">Show route</button>
+
+ 
+    <div role="main" class="ui-content" id="map-canvas">
+        <!-- map loads here... -->
+    </div>
+
+
+   <div data-role="footer"  data-position="fixed"  data-fullscreen="true">
+        <div data-role="navbar">
+      <ul>
+        <li><a href="#" class="ui-btn-active ui-state-persist">Route</a></li>
+        <li><a href="#multiple-page">Multiple</a></li>
+        <li><a href="#list">List</a></li>
+        <li><a href="#rating">Rating</a></li>
+        <li><a href="#nearest">Find Nearest</a></li>
+      </ul>
+    </div>
+  </div>
+</div> 
+<div data-role="page" id="multiple-page" data-url="multiple-page">
+ 
+
+  <div role="main" class="ui-content" id="multiple-markers"></div>
+
+   <div data-role="footer" data-position="fixed" data-fullscreen="true">
+        <div data-role="navbar">
+      <ul>
+        <li><a href="#map-page">Route</a></li>
+        <li><a href="#" class="ui-btn-active ui-state-persist">Multiple</a></li>
+        <li><a href="#list">List</a></li>
+        <li><a href="#rating">Rating</a></li>
+        <li><a href="#nearest">Find Nearest</a></li>
+      </ul>
+    </div>
+  </div>
+</div> 
+
+<div data-role="page" id="list">
+ 
+  <div data-role="main" class="ui-content">
+  <ul data-role="listview">
+                <li><a href="#pagetwo" data-transition="slide">Auto 1</a></li>
+				<li><a href="#pagetwo" data-transition="slide">Auto 2</a></li>
+				<li><a href="#pagetwo" data-transition="slide">Auto 3</a></li>
+				<li><a href="#pagetwo" data-transition="slide">Auto 4</a></li>
+				<li><a href="#pagetwo" data-transition="slide">Auto 5</a></li>
+				<li><a href="#pagetwo" data-transition="slide">Auto 6</a></li>
+            </ul>
+    
+  </div>
+
+   <div data-role="footer" data-position="fixed" data-fullscreen="true">
+        <div data-role="navbar">
+      <ul>
+        <li><a href="#map-page" >Route</a></li>
+        <li><a href="#multiple-page">Multiple</a></li>
+        <li><a href="#" class="ui-btn-active ui-state-persist">List</a></li>
+        <li><a href="#rating">Rating</a></li>
+        <li><a href="#nearest">Find Nearest</a></li>
+      </ul>
+    </div>
+  </div>
+</div> 
+<div data-role="page" id="pagetwo" class="container1">
+   
+    <h1 align="center">Autohona</h1>
+    <div id="cintainer2">
+	<br>
+<div><h2>Auto Details</h2>
+<h4> Number: AP 36G 5445</h4>
+<h4> Type: Share Auto</h4>
+<h4> Area: Panjagutta</h4>
+</div>
+
+<div><h2>Driver Information</h2>
+<div id="image">
+<img width="110" height="90" src="http://1.bp.blogspot.com/-UVcGHdWqN8w/Ufz2Iuz1ZzI/AAAAAAAAC9w/jrKfRGfxw40/s1600/28749_373245319434202_1930199485_n.jpg"</img>
+</div>
+<h4> Name: Srinivasarao</h4>
+<h4> Area: panjagutta </h4>
+</div> 
+    <br>
+    <br>   
+    </div> 
+     <div data-role="main" class="ui-content">
+  <a href="#list" data-transition="slide" data-direction="reverse">Back</a> 
+   </div>	
+
+   
+ 
+</div> 
+
+<div data-role="page" id="rating">
+ 
+
+  <div data-role="main" class="ui-content">
+    <p>Server Rating</p>
+        	
+    	<div id="scorecard"></div>
+    	User rating
+    	   	<div id="score"></div>
+		</div>
+		
+	</div>
+
+    
+ 
+  </div>
+
+   <div data-role="footer" data-position="fixed" data-fullscreen="true">
+        <div data-role="navbar">
+      <ul>
+        <li><a href="#map-page">Route</a></li>
+        <li><a href="#multiple-page">Multiple</a></li>
+        <li><a href="#list">List</a></li>
+        <li><a href="#" class="ui-btn-active ui-state-persist">Rating</a></li>
+        <li><a href="#nearest">Find Nearest</a></li>
+      </ul>
+    </div>
+  </div>
+</div> 
+
+<div data-role="page" id="nearest">
+ 
+
+  <div data-role="main" class="ui-content">
+  Distance between current location to ==>
+  <div id="addLocation"></div>
+  
+    </div>
+ 
+ 
+ 
+   
+
+
+   <div data-role="footer" data-position="fixed" data-fullscreen="true">
+        <div data-role="navbar">
+      <ul>
+        <li><a href="#map-page">Route</a></li>
+        <li><a href="#multiple-page">Multiple</a></li>
+        <li><a href="#list">List</a></li>
+        <li><a href="#rating">Rating</a></li>
+        <li><a href="#" class="ui-btn-active ui-state-persist">Find Nearest</a></li>
+      </ul>
+    </div>
+  </div>
+</div> 
+
+
+
+
+
+</html>
